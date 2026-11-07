@@ -1,4 +1,5 @@
 #include <gb/gb.h>
+#include <gbdk/console.h>
 #include <stdio.h>
 #include <stdint.h>
 
