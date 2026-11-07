@@ -18,9 +18,11 @@ jobs:
       - name: Install GBDK-2020
         run: |
           curl -L --fail -o gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/4.5.0/gbdk-linux64.tar.gz
-          tar -xzf gbdk.tar.gz
-          echo "$PWD/gbdk/bin" >> "$GITHUB_PATH"
-          find . -maxdepth 3 -type f -name lcc -print
+          sudo mkdir -p /opt/gbdk
+          sudo tar -xzf gbdk.tar.gz -C /opt/gbdk --strip-components=1
+          test -x /opt/gbdk/bin/lcc
+          test -x /opt/gbdk/bin/sdcc
+          echo "/opt/gbdk/bin" >> "$GITHUB_PATH"
 
       - name: Compile Game Boy ROM
         run: |
