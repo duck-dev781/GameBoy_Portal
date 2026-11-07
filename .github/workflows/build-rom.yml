@@ -1,0 +1,38 @@
+name: Build Game Boy ROM
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out game
+        uses: actions/checkout@v4
+
+      - name: Install GBDK-2020
+        run: |
+          curl -L --fail -o gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/4.5.0/gbdk-linux64.tar.gz
+          tar -xzf gbdk.tar.gz
+          echo "$PWD/gbdk/bin" >> "$GITHUB_PATH"
+          find . -maxdepth 3 -type f -name lcc -print
+
+      - name: Compile Game Boy ROM
+        run: |
+          mkdir -p build
+          lcc -Wa-l -Wl-m -Wl-j -o build/TEST_SUBJECT_001.gb src/main.c
+          test -s build/TEST_SUBJECT_001.gb
+          ls -lh build/TEST_SUBJECT_001.gb
+
+      - name: Upload ROM
+        uses: actions/upload-artifact@v4
+        with:
+          name: TEST_SUBJECT_001-Game-Boy-ROM
+          path: build/TEST_SUBJECT_001.gb
+          if-no-files-found: error
+          retention-days: 30
